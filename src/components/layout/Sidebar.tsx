@@ -7,7 +7,8 @@ import {
   ArrowLeftRight, 
   ClipboardList, 
   Settings,
-  LogOut
+  LogOut,
+  Box
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -27,12 +28,16 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-screen w-64 flex-col bg-base-200 text-base-content border-r border-base-300">
-      <div className="flex h-16 items-center justify-center border-b border-base-300 px-4">
-        <h1 className="text-xl font-bold text-primary">X inc.</h1>
+    <div className="flex h-screen w-64 flex-col bg-base-100 text-base-content border-r border-base-200/60 shadow-sm relative z-20">
+      <div className="flex h-20 items-center justify-start border-b border-base-200/60 px-6 gap-3">
+        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-content shadow-sm">
+          <Box size={18} strokeWidth={2.5} />
+        </div>
+        <h1 className="text-xl font-bold tracking-tight">X inc.</h1>
       </div>
-      <div className="flex-1 overflow-y-auto py-4">
-        <ul className="menu w-full px-4 gap-2">
+      <div className="flex-1 overflow-y-auto py-6">
+        <ul className="menu w-full px-3 gap-1.5 font-medium">
+          <li className="menu-title px-4 pb-2 text-xs uppercase tracking-wider text-base-content/50 font-bold">Main Menu</li>
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -41,24 +46,24 @@ export default function Sidebar() {
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                    "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200",
                     isActive 
-                      ? "bg-primary text-primary-content hover:bg-primary/90" 
-                      : "hover:bg-base-300"
+                      ? "bg-primary/10 text-primary shadow-sm" 
+                      : "text-base-content/70 hover:bg-base-200 hover:text-base-content"
                   )}
                 >
-                  <Icon size={20} />
-                  <span>{item.name}</span>
+                  <Icon size={18} className={isActive ? "text-primary" : "text-base-content/50"} />
+                  <span className={isActive ? "font-bold" : ""}>{item.name}</span>
                 </Link>
               </li>
             );
           })}
         </ul>
       </div>
-      <div className="border-t border-base-300 p-4">
-        <button className="btn btn-ghost w-full justify-start gap-3 text-error hover:bg-error/10">
-          <LogOut size={20} />
-          <span>Logout</span>
+      <div className="border-t border-base-200/60 p-4">
+        <button className="btn btn-ghost w-full justify-start gap-3 text-base-content/70 hover:text-error hover:bg-error/10 rounded-xl transition-colors">
+          <LogOut size={18} />
+          <span className="font-medium">Logout</span>
         </button>
       </div>
     </div>
