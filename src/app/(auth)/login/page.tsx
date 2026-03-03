@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, User, Eye, EyeOff, Box } from "lucide-react";
+import ThemeToggle from "@/components/layout/ThemeToggle";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +22,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-base-200 text-base-content font-sans antialiased min-h-screen flex items-stretch overflow-hidden">
+    <div className="bg-base-200 text-base-content font-sans antialiased min-h-screen flex items-stretch overflow-hidden relative">
+      {/* Theme Toggle for Login Page */}
+      <div className="absolute top-6 right-6 z-50">
+        <div className="bg-base-100/50 backdrop-blur-md rounded-full border border-base-200/60 shadow-sm p-1">
+          <ThemeToggle />
+        </div>
+      </div>
+
       {/* Left Side: Branding & Context */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col bg-primary text-primary-content">
         {/* Modern Creative Abstract Background */}

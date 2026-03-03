@@ -42,6 +42,15 @@ const topProducts = [
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#FF8042', '#00C49F'];
 
+// Helper to calculate custom ceiling for Y-Axis
+const calculateCeiling = (dataMax: number) => {
+  const base = Math.floor(dataMax / 100) * 100;
+  const remainder = dataMax % 100;
+  // If remainder is < 50, ceiling is base + 100 (e.g., 400 -> 500, 437 -> 500)
+  // If remainder is >= 50, ceiling is base + 200 (e.g., 450 -> 600, 490 -> 600)
+  return remainder < 50 ? base + 100 : base + 200;
+};
+
 const recentLogins = [
   { user: "Admin", time: "2 minutes ago", device: "Chrome / Windows" },
   { user: "John Doe", time: "1 hour ago", device: "Safari / macOS" },
@@ -68,6 +77,15 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function Dashboard() {
+  // Calculate max values and ceilings for consistent intervals
+  const areaMax = Math.max(...data.flatMap(d => [d.incoming, d.outgoing]));
+  const areaCeiling = calculateCeiling(areaMax);
+  const areaTicks = Array.from({ length: (areaCeiling / 100) + 1 }, (_, i) => i * 100);
+
+  const barMax = Math.max(...topProducts.map(p => p.sales));
+  const barCeiling = calculateCeiling(barMax);
+  const barTicks = Array.from({ length: (barCeiling / 100) + 1 }, (_, i) => i * 100);
+
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -166,7 +184,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className="h-72 w-full">
+              <div className="h-72 w-full text-base-content/60">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data}>
                     <defs>
@@ -179,9 +197,26 @@ export default function Dashboard() {
                         <stop offset="95%" stopColor="#f87272" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
-                    <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-                    <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" strokeOpacity={0.1} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="currentColor" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dy={10}
+                      tick={{ fill: 'currentColor' }}
+                    />
+                    <YAxis 
+                      stroke="currentColor" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dx={-10}
+                      tick={{ fill: 'currentColor' }}
+                      domain={[0, areaCeiling]}
+                      ticks={areaTicks}
+                    />
                     <Tooltip content={<CustomTooltip />} />
                     <Area type="monotone" 
                       dataKey="incoming" 
@@ -213,12 +248,29 @@ export default function Dashboard() {
           <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
             <div className="card-body p-6">
               <h3 className="card-title text-lg font-bold mb-6">Top Performing Products</h3>
-              <div className="h-72 w-full">
+              <div className="h-72 w-full text-base-content/60">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={topProducts}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
-                    <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-                    <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" strokeOpacity={0.1} />
+                    <XAxis 
+                      dataKey="name" 
+                      stroke="currentColor" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dy={10} 
+                      tick={{ fill: 'currentColor' }}
+                    />
+                    <YAxis 
+                      stroke="currentColor" 
+                      fontSize={12} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dx={-10}
+                      tick={{ fill: 'currentColor' }}
+                      domain={[0, barCeiling]}
+                      ticks={barTicks}
+                    />
                     <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(200, 200, 200, 0.4)' }}/>
                     <Bar 
                       dataKey="sales" 

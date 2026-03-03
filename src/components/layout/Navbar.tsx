@@ -1,6 +1,7 @@
 "use client";
 import { Search, Bell, User, Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function Navbar() {
         </div>
       </div>
       <div className="flex-none gap-3">
+        <ThemeToggle />
         <button className="btn btn-ghost btn-circle text-base-content/70 hover:text-base-content hover:bg-base-200/50">
           <div className="indicator">
             <Bell size={20} />
