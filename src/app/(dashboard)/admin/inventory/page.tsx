@@ -65,8 +65,8 @@ export default function InventoryList() {
             </div>
             
             <div className="flex gap-2">
-              <select className="select select-bordered select-sm">
-                <option disabled selected>Status</option>
+              <select className="select select-bordered select-sm" defaultValue="">
+                <option disabled value="">Status</option>
                 <option>In Stock</option>
                 <option>Low Stock</option>
                 <option>Out of Stock</option>

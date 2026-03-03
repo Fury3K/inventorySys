@@ -26,7 +26,7 @@ export default function Transactions() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Receiving & Going Out</h2>
+          <h2 className="text-2xl font-bold text-base-content">Receiving & Going Out</h2>
           <p className="text-base-content/60">Log stock movements and inventory updates</p>
         </div>
       </div>
@@ -36,19 +36,21 @@ export default function Transactions() {
         <div className="lg:col-span-1">
           <div className="card bg-base-100 shadow border border-base-300">
             <div className="card-body">
-              <h3 className="card-title mb-4">Record Movement</h3>
+              <h3 className="card-title text-base-content mb-4">Record Movement</h3>
               
               <div className="flex gap-2 mb-4">
                 <button 
-                  className={`btn flex-1 gap-2 ${type === 'receiving' ? 'btn-success' : 'btn-outline'}`}
+                  className={`btn flex-1 gap-2 ${type === 'receiving' ? 'btn-success text-success-content' : 'btn-outline text-base-content'}`}
                   onClick={() => setType('receiving')}
+                  type="button"
                 >
                   <ArrowDownCircle size={18} />
                   Receiving
                 </button>
                 <button 
-                  className={`btn flex-1 gap-2 ${type === 'shipping' ? 'btn-error' : 'btn-outline'}`}
+                  className={`btn flex-1 gap-2 ${type === 'shipping' ? 'btn-error text-error-content' : 'btn-outline text-base-content'}`}
                   onClick={() => setType('shipping')}
+                  type="button"
                 >
                   <ArrowUpCircle size={18} />
                   Shipping
@@ -57,13 +59,13 @@ export default function Transactions() {
 
               <form className="space-y-4">
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Stock Number</span></label>
+                  <label className="label"><span className="label-text font-medium text-base-content">Stock Number</span></label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
                     <input 
                       type="text" 
                       placeholder="Type or search SN..." 
-                      className="input input-bordered w-full pl-10" 
+                      className="input input-bordered w-full pl-10 bg-base-100 text-base-content" 
                       list="stock-numbers"
                     />
                     <datalist id="stock-numbers">
@@ -75,27 +77,27 @@ export default function Transactions() {
                 </div>
 
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Quantity</span></label>
+                  <label className="label"><span className="label-text font-medium text-base-content">Quantity</span></label>
                   <div className="relative">
                     <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
-                    <input type="number" placeholder="0" className="input input-bordered w-full pl-10" />
+                    <input type="number" placeholder="0" className="input input-bordered w-full pl-10 bg-base-100 text-base-content" />
                   </div>
                 </div>
 
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Date</span></label>
+                  <label className="label"><span className="label-text font-medium text-base-content">Date</span></label>
                   <div className="relative">
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
-                    <input type="date" defaultValue={today} className="input input-bordered w-full pl-10" />
+                    <input type="date" defaultValue={today} className="input input-bordered w-full pl-10 bg-base-100 text-base-content" />
                   </div>
                 </div>
 
                 <div className="form-control">
-                  <label className="label"><span className="label-text font-medium">Notes</span></label>
-                  <textarea className="textarea textarea-bordered h-20" placeholder="Optional notes..."></textarea>
+                  <label className="label"><span className="label-text font-medium text-base-content">Notes</span></label>
+                  <textarea className="textarea textarea-bordered h-20 bg-base-100 text-base-content" placeholder="Optional notes..."></textarea>
                 </div>
 
-                <button className={`btn w-full mt-4 ${type === 'receiving' ? 'btn-success' : 'btn-error'}`}>
+                <button type="submit" className={`btn w-full mt-4 ${type === 'receiving' ? 'btn-success' : 'btn-error'}`}>
                   Record {type === 'receiving' ? 'Incoming' : 'Outgoing'}
                 </button>
               </form>
@@ -108,12 +110,12 @@ export default function Transactions() {
           <div className="card bg-base-100 shadow border border-base-300 h-full">
             <div className="card-body p-0">
               <div className="p-4 border-b border-base-300">
-                <h3 className="card-title">Recent Activity</h3>
+                <h3 className="card-title text-base-content">Recent Activity</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="table">
+                <table className="table w-full text-base-content">
                   <thead>
-                    <tr>
+                    <tr className="text-base-content/70">
                       <th>Date</th>
                       <th>Type</th>
                       <th>Stock #</th>
@@ -123,16 +125,16 @@ export default function Transactions() {
                   </thead>
                   <tbody>
                     {transactions.map((tx) => (
-                      <tr key={tx.id} className="hover">
-                        <td className="text-xs">{tx.date}</td>
+                      <tr key={tx.id} className="hover:bg-base-200/50 border-b border-base-200">
+                        <td className="text-xs whitespace-nowrap">{tx.date}</td>
                         <td>
-                          <span className={`badge badge-sm font-bold ${tx.type === 'receiving' ? 'badge-success' : 'badge-error'}`}>
+                          <span className={`badge badge-sm font-bold ${tx.type === 'receiving' ? 'badge-success text-success-content' : 'badge-error text-error-content'}`}>
                             {tx.type.toUpperCase()}
                           </span>
                         </td>
                         <td className="font-mono">{tx.stockNumber}</td>
                         <td className="font-bold">{tx.quantity}</td>
-                        <td className="text-xs text-base-content/70">{tx.notes}</td>
+                        <td className="text-xs text-base-content/70 max-w-[200px] truncate" title={tx.notes}>{tx.notes}</td>
                       </tr>
                     ))}
                   </tbody>
