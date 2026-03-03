@@ -146,124 +146,153 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="card bg-base-100 shadow-sm border border-base-200/60">
-          <div className="card-body p-6">
-            <h3 className="card-title text-lg font-bold mb-6">Stock Movement Trend</h3>
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={data}>
-                  <defs>
-                    <linearGradient id="colorInc" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#36d399" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#36d399" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorOut" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#f87272" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#f87272" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
-                  <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-                  <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" 
-                    dataKey="incoming" 
-                    stroke="#36d399" 
-                    fillOpacity={1} 
-                    fill="url(#colorInc)" 
-                    strokeWidth={3}
-                    isAnimationActive={true}
-                    animationDuration={1500}
-                    animationEasing="ease-in-out"
-                  />
-                  <Area type="monotone" 
-                    dataKey="outgoing" 
-                    stroke="#f87272" 
-                    fillOpacity={1} 
-                    fill="url(#colorOut)" 
-                    strokeWidth={3}
-                    isAnimationActive={true}
-                    animationDuration={1500}
-                    animationEasing="ease-in-out"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-
-        <div className="card bg-base-100 shadow-sm border border-base-200/60">
-          <div className="card-body p-6">
-            <h3 className="card-title text-lg font-bold mb-6">Top Performing Products</h3>
-            <div className="h-72 w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={topProducts}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
-                  <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-                  <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
-                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(200, 200, 200, 0.4)' }}/>
-                  <Bar 
-                    dataKey="sales" 
-                    radius={[6, 6, 0, 0]}
-                    isAnimationActive={true}
-                    animationDuration={1500}
-                    animationEasing="ease-in-out"
-                  >
-                    {topProducts.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Login Activity */}
-      <div className="card bg-base-100 shadow-sm border border-base-200/60">
-        <div className="card-body p-0">
-          <div className="flex items-center justify-between p-6 border-b border-base-200/60">
-            <h3 className="card-title text-lg font-bold">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary mr-2 shadow-inner">
-                <Users size={16} strokeWidth={2.5} />
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-12 gap-6 items-start">
+        {/* Left Column: Charts */}
+        <div className="col-span-12 lg:col-span-8 space-y-6">
+          {/* Stock Trend Chart */}
+          <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
+            <div className="card-body p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="card-title text-lg font-bold">Stock Movement Trend</h3>
+                <div className="flex gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-[#36d399]"></div>
+                    <span className="text-xs font-bold text-base-content/60">Incoming</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-[#f87272]"></div>
+                    <span className="text-xs font-bold text-base-content/60">Outgoing</span>
+                  </div>
+                </div>
               </div>
-              Recent Login Activity
-            </h3>
-            <button className="btn btn-sm btn-ghost hover:bg-base-200 rounded-xl">View all logs</button>
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={data}>
+                    <defs>
+                      <linearGradient id="colorInc" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#36d399" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#36d399" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorOut" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f87272" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#f87272" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
+                    <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Area type="monotone" 
+                      dataKey="incoming" 
+                      stroke="#36d399" 
+                      fillOpacity={1} 
+                      fill="url(#colorInc)" 
+                      strokeWidth={3}
+                      isAnimationActive={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                    />
+                    <Area type="monotone" 
+                      dataKey="outgoing" 
+                      stroke="#f87272" 
+                      fillOpacity={1} 
+                      fill="url(#colorOut)" 
+                      strokeWidth={3}
+                      isAnimationActive={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
           </div>
-          <div className="overflow-x-auto p-2">
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b-2 border-base-200">
-                  <th className="font-bold text-base-content/60 px-6 py-4">User</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4">Activity</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4">Device</th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentLogins.map((login, i) => (
-                  <tr key={i} className="hover:bg-base-200/50 transition-colors border-b border-base-100 last:border-0">
-                    <td className="font-semibold px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="avatar placeholder">
-                          <div className="bg-neutral text-neutral-content rounded-full w-8">
-                            <span className="text-xs">{login.user.charAt(0)}</span>
+
+          {/* Top Products Chart */}
+          <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
+            <div className="card-body p-6">
+              <h3 className="card-title text-lg font-bold mb-6">Top Performing Products</h3>
+              <div className="h-72 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topProducts}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.05)" />
+                    <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="oklch(var(--bc) / 0.4)" fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(200, 200, 200, 0.4)' }}/>
+                    <Bar 
+                      dataKey="sales" 
+                      radius={[6, 6, 0, 0]}
+                      isAnimationActive={true}
+                      animationDuration={1500}
+                      animationEasing="ease-in-out"
+                    >
+                      {topProducts.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Activity */}
+        <div className="col-span-12 lg:col-span-4 h-full">
+          <div className="card bg-base-100 shadow-sm border border-base-200/60 h-full flex flex-col">
+            <div className="p-6 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
+              <h3 className="card-title text-lg font-bold">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-inner">
+                  <Users size={16} strokeWidth={2.5} />
+                </div>
+                Recent Login Activity
+              </h3>
+              <button className="btn btn-xs btn-ghost hover:bg-base-200 rounded-lg">View all</button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <div className="overflow-x-auto p-2">
+                <table className="table w-full">
+                  <thead>
+                    <tr className="border-b-2 border-base-200">
+                      <th className="font-bold text-base-content/60 px-4 py-3">User</th>
+                      <th className="font-bold text-base-content/60 px-4 py-3 text-right">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentLogins.map((login, i) => (
+                      <tr key={i} className="hover:bg-base-200/50 transition-colors border-b border-base-100 last:border-0">
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="avatar placeholder">
+                              <div className="bg-neutral text-neutral-content rounded-full w-8 shadow-sm">
+                                <span className="text-xs font-bold">{login.user.charAt(0)}</span>
+                              </div>
+                            </div>
+                            <div>
+                              <div className="font-bold text-sm">{login.user}</div>
+                              <div className="text-[10px] opacity-50 font-medium truncate max-w-[100px]">{login.device}</div>
+                            </div>
                           </div>
-                        </div>
-                        {login.user}
-                      </div>
-                    </td>
-                    <td className="text-base-content/70 px-6 py-4">{login.time}</td>
-                    <td className="px-6 py-4">
-                      <span className="badge badge-sm font-medium bg-base-200 border-0 text-base-content/80 px-2 py-3 rounded-md">{login.device}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="text-base-content/60 px-4 py-4 text-right text-xs font-semibold whitespace-nowrap">
+                          {login.time}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div className="p-6 mt-auto bg-base-200/10 border-t border-base-200/60">
+              <div className="alert bg-primary/5 border-primary/10 rounded-xl">
+                <TrendingUp className="text-primary" size={20} />
+                <div className="text-xs font-medium">
+                  <span className="font-bold text-primary">System Notice:</span> 
+                  Your inventory accuracy is up by 14% this week.
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

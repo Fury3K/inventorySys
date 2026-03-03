@@ -1,7 +1,18 @@
 "use client";
 import { Search, Bell, User, Settings, LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const router = useRouter();
+
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Clear the session cookie
+    document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    // Redirect to login page
+    window.location.href = "/login";
+  };
+
   return (
     <div className="navbar bg-base-100 border-b border-base-200/60 px-6 h-20 shadow-[0_1px_2px_rgba(0,0,0,0.02)] relative z-10">
       <div className="flex-1">
@@ -47,7 +58,10 @@ export default function Navbar() {
             </li>
             <div className="divider my-1"></div>
             <li>
-              <a className="py-2.5 px-4 rounded-xl text-error hover:bg-error/10 hover:text-error">
+              <a 
+                onClick={handleLogout}
+                className="py-2.5 px-4 rounded-xl text-error hover:bg-error/10 hover:text-error cursor-pointer"
+              >
                 <LogOut size={16} /> Logout
               </a>
             </li>

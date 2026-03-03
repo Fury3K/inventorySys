@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Package, 
@@ -26,6 +26,14 @@ const menuItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    // Clear the session cookie
+    document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    // Redirect to login page
+    window.location.href = "/login";
+  };
 
   return (
     <div className="flex h-screen w-64 flex-col bg-base-100 text-base-content border-r border-base-200/60 shadow-sm relative z-20">
@@ -61,7 +69,10 @@ export default function Sidebar() {
         </ul>
       </div>
       <div className="border-t border-base-200/60 p-4">
-        <button className="btn btn-ghost w-full justify-start gap-3 text-base-content/70 hover:text-error hover:bg-error/10 rounded-xl transition-colors">
+        <button 
+          onClick={handleLogout}
+          className="btn btn-ghost w-full justify-start gap-3 text-base-content/70 hover:text-error hover:bg-error/10 rounded-xl transition-colors"
+        >
           <LogOut size={18} />
           <span className="font-medium">Logout</span>
         </button>
