@@ -24,15 +24,16 @@ const menuItems = [
   { name: "Inventory", href: "/admin/inventory", icon: ClipboardList },
 ];
 
+import { logout } from "@/lib/auth";
+
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const handleLogout = () => {
-    // Clear the session cookie
-    document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    // Redirect to login page
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+    router.refresh();
   };
 
   return (

@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decrypt, getSession } from "@/lib/auth";
+import { decrypt } from "@/lib/session";
 
 export async function middleware(request: NextRequest) {
   const session = request.cookies.get("session")?.value;
   const path = request.nextUrl.pathname;
 
-  if (path.startsWith("/admin") || path === "/") {
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+  // 1. Define protected and public routes
+  const isProtectedRoute = path.startsWith("/admin") || path.startsWith("/dashboard") || path === "/";
+  const isPublicRoute = path === "/login";
+
+  // 2. Decrypt the session to verify it
+  const decryptedSession = session ? await decrypt(session) : null;
+
+  // 3. Redirect to /login if the user is not authenticated on a protected route
+  if (isProtectedRoute && !decryptedSession) {
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (path === "/login" && session) {
+  // 4. Redirect to / if the user is authenticated on a public route
+  if (isPublicRoute && decryptedSession) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

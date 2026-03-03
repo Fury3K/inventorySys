@@ -1,24 +1,37 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, User, Eye, EyeOff, Box } from "lucide-react";
+import { Lock, User, Eye, EyeOff, Box, AlertCircle } from "lucide-react";
 import ThemeToggle from "@/components/layout/ThemeToggle";
+import { login } from "@/lib/auth";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
     
-    // Simulate network request
-    setTimeout(() => {
-      document.cookie = "session=demo; path=/";
-      router.push("/");
-    }, 1500);
+    try {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+      
+      const result = await login(formData);
+      if (result?.success) {
+        router.push("/");
+      }
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -98,20 +111,28 @@ export default function LoginPage() {
             <p className="text-base-content/60 text-lg">Log in to manage your workspace.</p>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="alert alert-error mb-6 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
+              <AlertCircle size={20} />
+              <span className="font-semibold text-sm">{error}</span>
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             
             {/* Username Field */}
             <div className="form-control w-full">
               <label className="label">
-                <span className="label-text font-bold text-sm uppercase tracking-wide opacity-70">Email or Username</span>
+                <span className="label-text font-bold text-sm uppercase tracking-wide opacity-70">Username</span>
               </label>
               <label className="input input-bordered h-14 flex items-center gap-4 focus-within:outline-primary bg-base-200/40 border-base-200/60 rounded-2xl transition-all">
                 <User size={20} className="text-base-content/30" />
                 <input 
                   type="text" 
                   className="grow font-medium" 
-                  placeholder="jdoe@example.com" 
+                  placeholder="admin" 
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
@@ -131,6 +152,8 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"} 
                   className="grow font-medium" 
                   placeholder="••••••••" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button 

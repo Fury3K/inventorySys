@@ -3,15 +3,16 @@ import { Search, Bell, User, Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 
+import { logout } from "@/lib/auth";
+
 export default function Navbar() {
   const router = useRouter();
 
-  const handleLogout = (e: React.MouseEvent) => {
+  const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
-    // Clear the session cookie
-    document.cookie = "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    // Redirect to login page
-    window.location.href = "/login";
+    await logout();
+    router.push("/login");
+    router.refresh();
   };
 
   return (
