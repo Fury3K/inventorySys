@@ -112,7 +112,7 @@ export default function ProductList({ initialProducts }: { initialProducts: Prod
                     <td className="px-6 py-4"><span className="badge badge-ghost font-mono bg-base-200/50 border-0 px-2 py-3 rounded-md">{product.stockNumber}</span></td>
                     <td className="px-6 py-4 text-base-content/80">{product.supplier}</td>
                     <td className="px-6 py-4 font-semibold text-success">
-                      ${product.price ? parseFloat(product.price).toFixed(2) : '0.00'}
+                      ₱{product.price ? parseFloat(product.price).toFixed(2) : '0.00'}
                     </td>
                     <td className="px-6 py-4 text-base-content/80">{product.sizes}</td>
                     <td className="px-6 py-4">

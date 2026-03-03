@@ -148,7 +148,7 @@ export default function InventoryView({ initialProducts }: { initialProducts: an
                     </div>
                     <div>
                       <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-1">Unit Price</div>
-                      <div className="font-bold text-xl text-primary">${selectedItem.price ? parseFloat(selectedItem.price).toFixed(2) : '0.00'}</div>
+                      <div className="font-bold text-xl text-primary">₱{selectedItem.price ? parseFloat(selectedItem.price).toFixed(2) : '0.00'}</div>
                     </div>
                     <div className="col-span-2">
                       <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-1">Available Sizes</div>
