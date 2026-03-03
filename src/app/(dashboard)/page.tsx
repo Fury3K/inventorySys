@@ -18,7 +18,8 @@ import {
   LineChart,
   Line,
   AreaChart,
-  Area
+  Area,
+  Cell // Added Cell import
 } from "recharts";
 
 const data = [
@@ -39,12 +40,32 @@ const topProducts = [
   { name: "Product E", sales: 189 },
 ];
 
+const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#FF8042', '#00C49F']; // Custom colors for bars
+
 const recentLogins = [
   { user: "Admin", time: "2 minutes ago", device: "Chrome / Windows" },
   { user: "John Doe", time: "1 hour ago", device: "Safari / macOS" },
   { user: "Jane Smith", time: "3 hours ago", device: "Firefox / Linux" },
   { user: "Warehouse Staff", time: "5 hours ago", device: "Mobile App" },
 ];
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-4 bg-base-200 border border-base-300 rounded-lg shadow-lg">
+        <p className="label text-base-content/80 font-bold">{label}</p>
+        {payload.map((pld: any, index: number) => (
+          <div key={index} style={{ color: pld.color }} className="flex items-center gap-2">
+            <span className="font-semibold">{`${pld.name}:`}</span>
+            <span className="font-bold">{pld.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
+};
 
 export default function Dashboard() {
   return (
@@ -119,11 +140,27 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.1)" />
                   <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.5)" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="oklch(var(--bc) / 0.5)" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "oklch(var(--b1))", border: "1px solid oklch(var(--bc) / 0.1)", borderRadius: "8px" }}
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" 
+                    dataKey="incoming" 
+                    stroke="#36d399" 
+                    fillOpacity={1} 
+                    fill="url(#colorInc)" 
+                    strokeWidth={2}
+                    isAnimationActive={true}
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
                   />
-                  <Area type="monotone" dataKey="incoming" stroke="#36d399" fillOpacity={1} fill="url(#colorInc)" strokeWidth={2} />
-                  <Area type="monotone" dataKey="outgoing" stroke="#f87272" fillOpacity={1} fill="url(#colorOut)" strokeWidth={2} />
+                  <Area type="monotone" 
+                    dataKey="outgoing" 
+                    stroke="#f87272" 
+                    fillOpacity={1} 
+                    fill="url(#colorOut)" 
+                    strokeWidth={2}
+                    isAnimationActive={true}
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -139,10 +176,18 @@ export default function Dashboard() {
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(var(--bc) / 0.1)" />
                   <XAxis dataKey="name" stroke="oklch(var(--bc) / 0.5)" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="oklch(var(--bc) / 0.5)" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: "oklch(var(--b1))", border: "1px solid oklch(var(--bc) / 0.1)", borderRadius: "8px" }}
-                  />
-                  <Bar dataKey="sales" fill="oklch(var(--p))" radius={[4, 4, 0, 0]} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(200, 200, 200, 0.4)' }}/>
+                  <Bar 
+                    dataKey="sales" 
+                    radius={[4, 4, 0, 0]}
+                    isAnimationActive={true}
+                    animationDuration={1500}
+                    animationEasing="ease-in-out"
+                  >
+                    {topProducts.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
