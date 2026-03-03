@@ -34,7 +34,7 @@ export default function Transactions() {
       <div className="grid grid-cols-12 gap-8 items-stretch">
         {/* Left Column: Transaction Form */}
         <div className="col-span-12 lg:col-span-5">
-          <div className="card bg-base-100 shadow-sm border border-base-200/60 h-full">
+          <div className="card bg-surface shadow-sm border border-base-200/60 h-full">
             <div className="card-body p-8">
               <div className="flex items-center gap-3 mb-8">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
@@ -114,7 +114,7 @@ export default function Transactions() {
 
         {/* Right Column: Transaction History */}
         <div className="col-span-12 lg:col-span-7">
-          <div className="card bg-base-100 shadow-sm border border-base-200/60 h-full overflow-hidden">
+          <div className="card bg-surface shadow-sm border border-base-200/60 h-full overflow-hidden">
             <div className="card-body p-0">
               <div className="p-8 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
                 <div>

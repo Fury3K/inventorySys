@@ -38,7 +38,7 @@ export default function MasterList() {
         </button>
       </div>
 
-      <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
+      <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
         <div className="card-body p-0">
           <div className="p-4 border-b border-base-200/60 flex flex-wrap gap-4 items-center justify-between bg-base-200/20">
             <div className="relative flex-1 max-w-md">

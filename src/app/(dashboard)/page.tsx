@@ -103,7 +103,7 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="card bg-base-100 shadow-sm border border-base-200/60 transition-all hover:shadow-md hover:border-primary/20">
+        <div className="stat bg-surface shadow-sm rounded-xl border border-base-200/60 transition-all hover:shadow-md hover:border-primary/20">
           <div className="card-body p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-base-content/70">Total Products</h3>
@@ -118,7 +118,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-sm border border-base-200/60 transition-all hover:shadow-md hover:border-error/20">
+        <div className="stat bg-surface shadow-sm rounded-xl border border-base-200/60 transition-all hover:shadow-md hover:border-error/20">
           <div className="card-body p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-base-content/70">Low Stock Alerts</h3>
@@ -133,7 +133,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-sm border border-base-200/60 transition-all hover:shadow-md hover:border-success/20">
+        <div className="stat bg-surface shadow-sm rounded-xl border border-base-200/60 transition-all hover:shadow-md hover:border-success/20">
           <div className="card-body p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-base-content/70">Receiving Today</h3>
@@ -148,7 +148,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="card bg-base-100 shadow-sm border border-base-200/60 transition-all hover:shadow-md hover:border-secondary/20">
+        <div className="stat bg-surface shadow-sm rounded-xl border border-base-200/60 transition-all hover:shadow-md hover:border-secondary/20">
           <div className="card-body p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-base-content/70">Shipping Today</h3>
@@ -169,7 +169,7 @@ export default function Dashboard() {
         {/* Left Column: Charts */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
           {/* Stock Trend Chart */}
-          <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
+          <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
             <div className="card-body p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="card-title text-lg font-bold">Stock Movement Trend</h3>
@@ -245,7 +245,7 @@ export default function Dashboard() {
           </div>
 
           {/* Top Products Chart */}
-          <div className="card bg-base-100 shadow-sm border border-base-200/60 overflow-hidden">
+          <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
             <div className="card-body p-6">
               <h3 className="card-title text-lg font-bold mb-6">Top Performing Products</h3>
               <div className="h-72 w-full text-base-content/60">
@@ -292,7 +292,7 @@ export default function Dashboard() {
 
         {/* Right Column: Activity */}
         <div className="col-span-12 lg:col-span-4 h-full">
-          <div className="card bg-base-100 shadow-sm border border-base-200/60 h-full flex flex-col">
+          <div className="card bg-surface shadow-sm border border-base-200/60 h-full flex flex-col">
             <div className="p-6 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
               <h3 className="card-title text-lg font-bold">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-inner">
