@@ -28,7 +28,7 @@ export const products = pgTable("products", {
 
 export const transactions = pgTable("transactions", {
   id: serial("id").primaryKey(),
-  productId: integer("product_id").references(() => products.id),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }),
   type: varchar("type", { length: 20 }).notNull(), // 'receiving', 'shipping'
   quantity: integer("quantity").notNull(),
   date: timestamp("date").defaultNow(),
