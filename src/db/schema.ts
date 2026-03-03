@@ -21,6 +21,7 @@ export const products = pgTable("products", {
   price: decimal("price", { precision: 10, scale: 2 }),
   sizes: text("sizes"), // e.g., "S, M, L, XL"
   currentStock: integer("current_stock").default(0),
+  minStock: integer("min_stock").default(10),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
