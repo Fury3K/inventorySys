@@ -5,7 +5,6 @@ import { Moon, Sun } from "lucide-react";
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<"winter" | "night">("winter");
 
-  // Load theme on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as "winter" | "night" | null;
     const initialTheme = savedTheme || "winter";
@@ -23,14 +22,16 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="btn btn-ghost btn-circle text-base-content/70 hover:text-base-content hover:bg-base-200/50"
+      className="btn btn-ghost btn-sm btn-circle text-base-content/50 hover:text-base-content hover:bg-base-200/60 transition-all"
       aria-label="Toggle Theme"
     >
-      {theme === "winter" ? (
-        <Moon size={20} className="transition-all" />
-      ) : (
-        <Sun size={20} className="transition-all" />
-      )}
+      <div className="swap swap-rotate">
+        {theme === "winter" ? (
+          <Moon size={17} className="transition-transform duration-300" />
+        ) : (
+          <Sun size={17} className="transition-transform duration-300" />
+        )}
+      </div>
     </button>
   );
 }

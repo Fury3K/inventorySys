@@ -1,227 +1,281 @@
 "use client";
-import { 
-  Box, 
-  ArrowDownCircle, 
-  ArrowUpCircle, 
-  AlertTriangle, 
-  TrendingUp, 
-  Package, 
-  DollarSign, 
+import {
+  Box,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  AlertTriangle,
+  TrendingUp,
+  Package,
   Clock,
-  Layers
+  Layers,
 } from "lucide-react";
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   AreaChart,
   Area,
   BarChart,
   Bar,
-  Cell
-} from 'recharts';
+  Cell,
+} from "recharts";
 
-export default function DashboardOverview({ stats, chartData, stockData, recentTransactions }: any) {
+interface DashboardStats {
+  totalProducts: number;
+  totalStock: number;
+  lowStockItems: number;
+  totalTransactions: number;
+}
+
+interface ChartDataPoint {
+  name: string;
+  in: number;
+  out: number;
+}
+
+interface StockDataPoint {
+  name: string;
+  stock: number;
+}
+
+interface Transaction {
+  id: number;
+  type: string;
+  quantity: number;
+  date: Date | string | null;
+  notes: string | null;
+  product?: {
+    name: string;
+    stockNumber: string;
+  } | null;
+}
+
+interface DashboardOverviewProps {
+  stats: DashboardStats;
+  chartData: ChartDataPoint[];
+  stockData: StockDataPoint[];
+  recentTransactions: Transaction[];
+}
+
+export default function DashboardOverview({
+  stats,
+  chartData,
+  stockData,
+  recentTransactions,
+}: DashboardOverviewProps) {
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-10">
+    <div className="space-y-6 max-w-7xl mx-auto pb-8 animate-fade-in">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-extrabold tracking-tight">System Overview</h2>
-        <p className="text-base-content/60 mt-1">Real-time inventory metrics and performance</p>
+        <h2 className="text-2xl font-bold tracking-tight">Overview</h2>
+        <p className="text-base-content/50 text-sm mt-0.5">Real-time inventory metrics and performance</p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Total Products" 
-          value={stats.totalProducts} 
-          icon={<Package size={24} />} 
-          trend="In Catalog" 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          title="Total Products"
+          value={stats.totalProducts}
+          icon={<Package size={18} />}
+          label="In Catalog"
           color="primary"
         />
-        <StatCard 
-          title="Total Stock" 
-          value={stats.totalStock} 
-          icon={<Box size={24} />} 
-          trend="Available" 
+        <StatCard
+          title="Total Stock"
+          value={stats.totalStock}
+          icon={<Box size={18} />}
+          label="Available"
           color="secondary"
         />
-        <StatCard 
-          title="Low Stock Items" 
-          value={stats.lowStockItems} 
-          icon={<AlertTriangle size={24} />} 
-          trend="Critical" 
+        <StatCard
+          title="Low Stock"
+          value={stats.lowStockItems}
+          icon={<AlertTriangle size={18} />}
+          label="Critical"
           color="warning"
         />
-        <StatCard 
-          title="Total Activity" 
-          value={stats.totalTransactions} 
-          icon={<TrendingUp size={24} />} 
-          trend="All Time" 
+        <StatCard
+          title="Activity"
+          value={stats.totalTransactions}
+          icon={<TrendingUp size={18} />}
+          label="All Time"
           color="success"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Area Chart: Stock Movement */}
-        <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
-          <div className="card-body p-0">
-            <div className="p-6 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
-              <h3 className="font-bold text-lg flex items-center gap-2">
-                <TrendingUp size={20} className="text-primary" />
-                Stock Movement (Last 7 Days)
-              </h3>
-            </div>
-            <div className="h-80 w-full p-6">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="colorIn" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorOut" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-error)" stopOpacity={0.1}/>
-                      <stop offset="95%" stopColor="var(--color-error)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                  <Tooltip 
-                    contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}}
-                  />
-                  <Area type="monotone" dataKey="in" name="Receiving" stroke="var(--color-primary)" fillOpacity={1} fill="url(#colorIn)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="out" name="Shipping" stroke="var(--color-error)" fillOpacity={1} fill="url(#colorOut)" strokeWidth={3} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Area Chart */}
+        <div className="card bg-base-100 border border-base-300/40 overflow-hidden">
+          <div className="px-5 py-4 border-b border-base-300/40 flex items-center gap-2">
+            <TrendingUp size={16} className="text-primary" />
+            <h3 className="font-semibold text-sm">Stock Movement (7 Days)</h3>
+          </div>
+          <div className="h-64 p-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id="colorIn" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.15} />
+                    <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorOut" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="var(--color-error)" stopOpacity={0.15} />
+                    <stop offset="100%" stopColor="var(--color-error)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-base-300)" strokeOpacity={0.5} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} dy={8} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} width={30} />
+                <Tooltip
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid var(--color-base-300)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    fontSize: "12px",
+                    padding: "8px 12px",
+                  }}
+                />
+                <Area type="monotone" dataKey="in" name="Receiving" stroke="var(--color-primary)" fillOpacity={1} fill="url(#colorIn)" strokeWidth={2} />
+                <Area type="monotone" dataKey="out" name="Shipping" stroke="var(--color-error)" fillOpacity={1} fill="url(#colorOut)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Bar Chart: Top Products by Stock */}
-        <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
-          <div className="card-body p-0">
-            <div className="p-6 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
-              <h3 className="font-bold text-lg flex items-center gap-2">
-                <Layers size={20} className="text-secondary" />
-                Top Product Stock Levels
-              </h3>
-            </div>
-            <div className="h-80 w-full p-6">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stockData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 12}} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
-                  <Tooltip 
-                    cursor={{fill: 'transparent'}}
-                    contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)'}}
-                  />
-                  <Bar dataKey="stock" name="Current Stock" radius={[8, 8, 0, 0]} barSize={40}>
-                    {stockData.map((entry: any, index: number) => (
-                      <Cell key={`cell-${index}`} fill={index % 2 === 0 ? 'var(--color-secondary)' : 'var(--color-primary)'} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+        {/* Bar Chart */}
+        <div className="card bg-base-100 border border-base-300/40 overflow-hidden">
+          <div className="px-5 py-4 border-b border-base-300/40 flex items-center gap-2">
+            <Layers size={16} className="text-secondary" />
+            <h3 className="font-semibold text-sm">Top Stock Levels</h3>
+          </div>
+          <div className="h-64 p-4">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stockData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-base-300)" strokeOpacity={0.5} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11 }} dy={8} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11 }} width={30} />
+                <Tooltip
+                  cursor={{ fill: "transparent" }}
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid var(--color-base-300)",
+                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                    fontSize: "12px",
+                    padding: "8px 12px",
+                  }}
+                />
+                <Bar dataKey="stock" name="Current Stock" radius={[6, 6, 0, 0]} barSize={32}>
+                  {stockData.map((_: StockDataPoint, index: number) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? "var(--color-primary)" : "var(--color-secondary)"} opacity={0.85} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Recent Activity Table */}
-      <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
-        <div className="card-body p-0">
-          <div className="p-6 border-b border-base-200/60 bg-base-200/20 flex items-center justify-between">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <Clock size={20} className="text-primary" />
-              Recent System Activity
-            </h3>
-            <a href="/admin/transactions" className="btn btn-ghost btn-sm rounded-lg font-bold text-primary">View Full Ledger</a>
+      {/* Recent Activity */}
+      <div className="card bg-base-100 border border-base-300/40 overflow-hidden">
+        <div className="px-5 py-4 border-b border-base-300/40 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Clock size={16} className="text-primary" />
+            <h3 className="font-semibold text-sm">Recent Activity</h3>
           </div>
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b-2 border-base-200 bg-base-200/10">
-                  <th className="font-bold text-xs uppercase tracking-widest text-base-content/50 px-6 py-4">Status</th>
-                  <th className="font-bold text-xs uppercase tracking-widest text-base-content/50 px-6 py-4">Product</th>
-                  <th className="font-bold text-xs uppercase tracking-widest text-base-content/50 px-6 py-4">Quantity</th>
-                  <th className="font-bold text-xs uppercase tracking-widest text-base-content/50 px-6 py-4">Date</th>
-                  <th className="font-bold text-xs uppercase tracking-widest text-base-content/50 px-6 py-4">Notes</th>
+          <a href="/admin/transactions" className="text-xs font-semibold text-primary hover:underline">
+            View all
+          </a>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-base-300/40">
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Type</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Product</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Qty</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Date</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentTransactions.map((tx) => (
+                <tr key={tx.id} className="hover:bg-base-200/40 transition-colors border-b border-base-200/40 last:border-0">
+                  <td className="px-5 py-3">
+                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                      tx.type === "receiving" ? "bg-success/10 text-success" : "bg-error/10 text-error"
+                    }`}>
+                      {tx.type === "receiving" ? <ArrowDownCircle size={14} /> : <ArrowUpCircle size={14} />}
+                    </div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <div className="text-sm font-medium">{tx.product?.name || "Unknown"}</div>
+                    <div className="text-[10px] font-mono text-base-content/40">{tx.product?.stockNumber}</div>
+                  </td>
+                  <td className="px-5 py-3">
+                    <span className={`text-sm font-bold ${tx.type === "receiving" ? "text-success" : "text-error"}`}>
+                      {tx.type === "receiving" ? "+" : "-"}{tx.quantity}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-xs text-base-content/50">
+                    {tx.date ? new Date(tx.date).toLocaleDateString() : "N/A"}
+                  </td>
+                  <td className="px-5 py-3 text-xs text-base-content/40 truncate max-w-[180px]">
+                    {tx.notes || "—"}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {recentTransactions.map((tx: any) => (
-                  <tr key={tx.id} className="hover:bg-base-200/30 transition-colors border-b border-base-100 last:border-0">
-                    <td className="px-6 py-4">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                        tx.type === 'receiving' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'
-                      }`}>
-                        {tx.type === 'receiving' ? <ArrowDownCircle size={16} /> : <ArrowUpCircle size={16} />}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-sm">{tx.product?.name || 'Unknown'}</div>
-                      <div className="text-[10px] font-mono opacity-50">{tx.product?.stockNumber}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`font-black ${tx.type === 'receiving' ? 'text-success' : 'text-error'}`}>
-                        {tx.type === 'receiving' ? '+' : '-'}{tx.quantity}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-xs font-bold text-base-content/60">
-                      {new Date(tx.date).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4 text-xs text-base-content/50 truncate max-w-[200px]">
-                      {tx.notes || '-'}
-                    </td>
-                  </tr>
-                ))}
-                {recentTransactions.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="text-center py-20 text-base-content/30 font-bold uppercase tracking-widest italic">
-                      No Activity Logged
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              ))}
+              {recentTransactions.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-12 text-base-content/30 text-sm">
+                    No activity recorded yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, icon, trend, color }: any) {
-  const colorClasses: any = {
-    primary: "text-primary bg-primary/10",
-    secondary: "text-secondary bg-secondary/10",
-    warning: "text-warning bg-warning/10",
-    success: "text-success bg-success/10",
-    error: "text-error bg-error/10",
+function StatCard({
+  title,
+  value,
+  icon,
+  label,
+  color,
+}: {
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  label: string;
+  color: "primary" | "secondary" | "warning" | "success" | "error";
+}) {
+  const iconBg: Record<string, string> = {
+    primary: "bg-primary/10 text-primary",
+    secondary: "bg-secondary/10 text-secondary",
+    warning: "bg-warning/10 text-warning",
+    success: "bg-success/10 text-success",
+    error: "bg-error/10 text-error",
   };
 
   return (
-    <div className="card bg-surface shadow-sm border border-base-200/60 hover:shadow-md transition-all duration-300 group">
-      <div className="card-body p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className={`p-3 rounded-2xl transition-transform duration-300 group-hover:scale-110 ${colorClasses[color]}`}>
+    <div className="card bg-base-100 border border-base-300/40 hover:border-base-300/70 transition-all duration-200 group">
+      <div className="card-body p-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className={`p-2 rounded-lg transition-transform duration-200 group-hover:scale-105 ${iconBg[color]}`}>
             {icon}
           </div>
-          <div className="badge badge-sm font-bold border-0 px-2 py-2.5 bg-base-200/50 text-base-content/60">
-            {trend}
-          </div>
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40">
+            {label}
+          </span>
         </div>
-        <div>
-          <p className="text-sm font-bold text-base-content/50 uppercase tracking-widest">{title}</p>
-          <h4 className="text-3xl font-black mt-1 tracking-tight">{value}</h4>
-        </div>
+        <p className="text-xs font-medium text-base-content/50">{title}</p>
+        <h4 className="text-2xl font-bold tracking-tight">{value}</h4>
       </div>
     </div>
   );

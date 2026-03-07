@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
-import { Search, ArrowUpDown, Download, Eye, Image as ImageIcon, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
+import { Search, Eye, Image as ImageIcon, CheckCircle2, AlertCircle, XCircle } from "lucide-react";
 
 interface Product {
   id: number;
   stockNumber: string;
   name: string;
-  currentStock: number;
-  minStock: number;
+  currentStock: number | null;
+  minStock: number | null;
   supplier: string | null;
   price: string | null;
   sizes: string | null;
@@ -15,172 +15,186 @@ interface Product {
   updatedAt: Date | null;
 }
 
-export default function InventoryView({ initialProducts }: { initialProducts: any[] }) {
+interface InventoryItem extends Product {
+  status: "In Stock" | "Low Stock" | "Out of Stock";
+}
+
+export default function InventoryView({ initialProducts }: { initialProducts: Product[] }) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
 
-  const filteredItems = initialProducts.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.stockNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  ).map(item => {
-    let status: 'In Stock' | 'Low Stock' | 'Out of Stock' = 'In Stock';
-    if (item.currentStock <= 0) status = 'Out of Stock';
-    else if (item.currentStock <= (item.minStock || 10)) status = 'Low Stock';
-    
-    return { ...item, status };
-  });
+  const filteredItems: InventoryItem[] = initialProducts
+    .filter(
+      (item) =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.stockNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .map((item) => {
+      let status: InventoryItem["status"] = "In Stock";
+      if ((item.currentStock ?? 0) <= 0) status = "Out of Stock";
+      else if ((item.currentStock ?? 0) <= (item.minStock ?? 10)) status = "Low Stock";
+      return { ...item, status };
+    });
 
-  const openModal = (item: any) => {
+  const openModal = (item: InventoryItem) => {
     setSelectedItem(item);
-    (document.getElementById('product_details_modal') as any).showModal();
+    (document.getElementById("product_details_modal") as HTMLDialogElement).showModal();
+  };
+
+  const statusConfig = {
+    "In Stock":  { icon: <CheckCircle2 size={12} />, cls: "bg-success/10 text-success" },
+    "Low Stock": { icon: <AlertCircle size={12} />,  cls: "bg-warning/10 text-warning" },
+    "Out of Stock": { icon: <XCircle size={12} />,   cls: "bg-error/10 text-error" },
   };
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-10">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-3xl font-extrabold tracking-tight">Inventory Status</h2>
-          <p className="text-base-content/60 mt-1">Real-time overview of your current stock levels</p>
-        </div>
+    <div className="space-y-6 max-w-7xl mx-auto pb-8 animate-fade-in">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Inventory</h2>
+        <p className="text-base-content/50 text-sm mt-0.5">Real-time stock levels and status</p>
       </div>
 
-      <div className="card bg-surface shadow-sm border border-base-200/60 overflow-hidden">
-        <div className="card-body p-0">
-          <div className="p-4 border-b border-base-200/60 flex flex-wrap gap-4 items-center justify-between bg-base-200/20">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
-              <input
-                type="text"
-                placeholder="Filter by name or stock number..."
-                className="input input-bordered w-full pl-10 bg-base-100 rounded-xl border-base-200/60 focus:border-primary transition-all"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+      <div className="card bg-base-100 border border-base-300/40 overflow-hidden">
+        {/* Search */}
+        <div className="px-4 py-3 border-b border-base-300/40 flex items-center">
+          <div className="relative flex-1 max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/30" size={15} />
+            <input
+              type="text"
+              placeholder="Filter by name or stock number..."
+              className="input input-sm bg-base-200/50 border-0 w-full pl-9 rounded-lg text-sm h-8 focus:bg-base-200 focus:outline-primary/40 transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
+        </div>
 
-          <div className="overflow-x-auto p-2">
-            <table className="table w-full table-zebra">
-              <thead>
-                <tr className="border-b-2 border-base-200">
-                  <th className="font-bold text-base-content/60 px-6 py-4">Product Details</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4">Stock Number</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4 text-center">Current Qty</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4">Status</th>
-                  <th className="font-bold text-base-content/60 px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-base-200/50 transition-colors border-b border-base-100 last:border-0">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-base">{item.name}</div>
+        {/* Table */}
+        <div className="overflow-x-auto">
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-base-300/40">
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Product</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Stock No.</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3 text-center">Qty</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3">Status</th>
+                <th className="text-[10px] font-semibold uppercase tracking-wider text-base-content/40 px-5 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredItems.map((item) => {
+                const badge = statusConfig[item.status];
+                return (
+                  <tr key={item.id} className="hover:bg-base-200/30 transition-colors border-b border-base-200/40 last:border-0">
+                    <td className="px-5 py-3">
+                      <span className="font-medium text-sm">{item.name}</span>
                     </td>
-                    <td className="px-6 py-4"><span className="badge badge-ghost font-mono bg-base-200/50 border-0 px-2 py-3 rounded-md">{item.stockNumber}</span></td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="font-bold text-xl">{item.currentStock}</div>
-                      <div className="text-xs font-medium text-base-content/50">Min: {item.minStock}</div>
+                    <td className="px-5 py-3">
+                      <span className="text-xs font-mono bg-base-200/50 px-1.5 py-0.5 rounded text-base-content/60">{item.stockNumber}</span>
                     </td>
-                    <td className="px-6 py-4">
-                      <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${
-                        item.status === 'In Stock' ? 'bg-success/10 text-success' : 
-                        item.status === 'Low Stock' ? 'bg-warning/10 text-warning' : 'bg-error/10 text-error'
-                      }`}>
-                        {item.status === 'In Stock' && <CheckCircle2 size={14} />}
-                        {item.status === 'Low Stock' && <AlertCircle size={14} />}
-                        {item.status === 'Out of Stock' && <XCircle size={14} />}
+                    <td className="px-5 py-3 text-center">
+                      <div className="text-base font-bold">{item.currentStock}</div>
+                      <div className="text-[10px] text-base-content/40">min: {item.minStock}</div>
+                    </td>
+                    <td className="px-5 py-3">
+                      <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${badge.cls}`}>
+                        {badge.icon}
                         {item.status}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <button className="btn btn-ghost btn-sm gap-2 rounded-lg hover:bg-primary/10 hover:text-primary" onClick={() => openModal(item)}>
-                        <Eye size={16} />
+                    <td className="px-5 py-3 text-right">
+                      <button
+                        className="btn btn-ghost btn-xs gap-1 rounded-lg text-primary hover:bg-primary/8 text-[11px]"
+                        onClick={() => openModal(item)}
+                      >
+                        <Eye size={13} />
                         View
                       </button>
                     </td>
                   </tr>
-                ))}
-                {filteredItems.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="text-center py-20 text-base-content/40">No inventory data available.</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                );
+              })}
+              {filteredItems.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center py-12 text-base-content/30 text-sm">
+                    No inventory data available
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
       {/* Details Modal */}
       <dialog id="product_details_modal" className="modal modal-bottom sm:modal-middle">
-        <div className="modal-box sm:w-11/12 sm:max-w-2xl rounded-2xl shadow-2xl p-8">
+        <div className="modal-box sm:w-11/12 sm:max-w-lg rounded-2xl p-6">
           {selectedItem && (
             <>
-              <div className="flex justify-between items-start mb-8">
-                <div>
-                  <h3 className="font-extrabold text-2xl tracking-tight">{selectedItem.name}</h3>
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="badge badge-ghost font-mono bg-base-200/50 border-0 px-2 py-3 rounded-md">{selectedItem.stockNumber}</span>
-                    <div className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-bold ${
-                        selectedItem.status === 'In Stock' ? 'bg-success/10 text-success' : 
-                        selectedItem.status === 'Low Stock' ? 'bg-warning/10 text-warning' : 'bg-error/10 text-error'
-                      }`}>
-                        {selectedItem.status}
-                    </div>
+              <div className="mb-5">
+                <h3 className="font-bold text-lg">{selectedItem.name}</h3>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <span className="text-xs font-mono bg-base-200/50 px-1.5 py-0.5 rounded text-base-content/60">
+                    {selectedItem.stockNumber}
+                  </span>
+                  <div className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${statusConfig[selectedItem.status].cls}`}>
+                    {statusConfig[selectedItem.status].icon}
+                    {selectedItem.status}
                   </div>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-                <div className="md:col-span-2 aspect-square rounded-2xl bg-base-200/50 flex items-center justify-center overflow-hidden border border-base-200/60 shadow-inner">
+
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-5">
+                <div className="sm:col-span-2 aspect-square rounded-xl bg-base-200/40 flex items-center justify-center overflow-hidden border border-base-300/30">
                   {selectedItem.imageUrl ? (
                     <img src={selectedItem.imageUrl} alt={selectedItem.name} className="object-cover w-full h-full" />
                   ) : (
-                    <ImageIcon size={48} className="text-base-content/20" />
+                    <ImageIcon size={36} className="text-base-content/15" />
                   )}
                 </div>
-                
-                <div className="md:col-span-3 space-y-6">
-                  <div className="grid grid-cols-2 gap-6">
+
+                <div className="sm:col-span-3 space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-1">Supplier</div>
-                      <div className="font-semibold text-lg">{selectedItem.supplier || 'N/A'}</div>
+                      <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40 mb-0.5">Supplier</div>
+                      <div className="font-medium text-sm">{selectedItem.supplier || "N/A"}</div>
                     </div>
                     <div>
-                      <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-1">Unit Price</div>
-                      <div className="font-bold text-xl text-primary">₱{selectedItem.price ? parseFloat(selectedItem.price).toFixed(2) : '0.00'}</div>
-                    </div>
-                    <div className="col-span-2">
-                      <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-1">Available Sizes</div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {selectedItem.sizes?.split(',').map((size: string, idx: number) => (
-                          <span key={idx} className="badge badge-outline badge-md font-medium border-base-300">{size.trim()}</span>
-                        )) || <span className="text-base-content/40">No sizes specified</span>}
-                      </div>
+                      <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40 mb-0.5">Unit Price</div>
+                      <div className="font-bold text-primary">₱{selectedItem.price ? parseFloat(selectedItem.price).toFixed(2) : "0.00"}</div>
                     </div>
                   </div>
 
-                  <div className="divider opacity-50"></div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40 mb-1">Sizes</div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedItem.sizes?.split(",").map((size: string, idx: number) => (
+                        <span key={idx} className="badge badge-outline badge-sm text-[11px] border-base-300/60">{size.trim()}</span>
+                      )) || <span className="text-xs text-base-content/40">No sizes specified</span>}
+                    </div>
+                  </div>
+
+                  <div className="divider my-1 opacity-30"></div>
 
                   <div>
-                    <div className="text-xs uppercase tracking-wider font-bold text-base-content/50 mb-2">Current Stock Level</div>
-                    <div className="flex items-end gap-3">
-                      <div className={`text-4xl font-black tracking-tight ${
-                        selectedItem.status === 'Low Stock' ? 'text-warning' : 
-                        selectedItem.status === 'Out of Stock' ? 'text-error' : 'text-success'
+                    <div className="text-[10px] uppercase tracking-wider font-semibold text-base-content/40 mb-1">Current Stock</div>
+                    <div className="flex items-end gap-2">
+                      <span className={`text-3xl font-bold ${
+                        selectedItem.status === "Low Stock" ? "text-warning" :
+                        selectedItem.status === "Out of Stock" ? "text-error" : "text-success"
                       }`}>
                         {selectedItem.currentStock}
-                      </div>
-                      <div className="text-base font-semibold text-base-content/60 mb-1">units available</div>
+                      </span>
+                      <span className="text-sm text-base-content/50 mb-0.5">units</span>
                     </div>
-                    <div className="text-xs font-medium text-base-content/50 mt-2 text-right">Minimum required: {selectedItem.minStock}</div>
+                    <div className="text-[10px] text-base-content/40 mt-1">Min required: {selectedItem.minStock}</div>
                   </div>
                 </div>
               </div>
-              
-              <div className="modal-action mt-8">
+
+              <div className="modal-action mt-5">
                 <form method="dialog">
-                  <button className="btn btn-ghost rounded-xl">Close Details</button>
+                  <button className="btn btn-ghost btn-sm rounded-lg">Close</button>
                 </form>
               </div>
             </>
